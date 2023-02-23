@@ -1,0 +1,26 @@
+:root {
+  color-scheme: light dark;
+  font-family: Ubuntu;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: black;
+    background-color: white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: white;
+    background-color: black;
+
+    --test-var: 3rem;
+  }
+}
