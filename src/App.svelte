@@ -1,20 +1,32 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
-  export let prop = 1;
+  export let prop;
+
+  let counter = 0;
+
+  $: console.log('Count changed to', counter);
 
   function callMe() {
     dispatch('message', {
       body: 2,
     });
   }
+
+  function handleClick() {
+    counter++;
+  }
 </script>
 
-{#if prop === 1}
-  <main>!Empty project in Svelte! {prop}</main>
-{:else}
-  <main>Empty project in Svelte! {prop}</main>
-{/if}
+<main>
+  {#if prop}
+    <p>Empty project in Svelte! {prop}</p>
+  {:else}
+    <p>Empty project in Svelte!</p>
+  {/if}
+  <button on:click={handleClick}>Click</button>
+  <p class="counter">Counter:{counter}</p>
+</main>
 
 <style>
   main {
