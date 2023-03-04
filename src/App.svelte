@@ -1,37 +1,42 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  const dispatch = createEventDispatcher();
-  export let prop;
+  import Sidebar from './components/Sidebar.svelte';
+  import List from './components/List.svelte';
+  import Form from './components/Form.svelte';
 
-  let counter = 0;
+  let pageSwitch = 'view';
 
-  $: console.log('Count changed to', counter);
-
-  function callMe() {
-    dispatch('message', {
-      body: 2,
-    });
+  function handleNew() {
+    pageSwitch = 'new';
   }
 
-  function handleClick() {
-    counter++;
+  function handleView() {
+    pageSwitch = 'view';
   }
 </script>
 
-<main>
-  {#if prop}
-    <p>Empty project in Svelte! {prop}</p>
+<div class="container">
+  <Sidebar on:new={handleNew} on:view={handleView} />
+  {#if pageSwitch == 'view'}
+    <List />
+  {:else if pageSwitch == 'new'}
+    <Form />
   {:else}
-    <p>Empty project in Svelte!</p>
+    <div>Error occur, please refresh page</div>
   {/if}
-  <button on:click={handleClick}>Click</button>
-  <p class="counter">Counter:{counter}</p>
-</main>
+</div>
 
 <style>
+  .container {
+    display: flex;
+    flex-direction: row;
+
+    height: 100vh;
+  }
+
   main {
     text-decoration: wavy;
     text-align: center;
-    font-size: var(--test-var);
+    background-color: #eeeeee;
+    width: 100%;
   }
 </style>

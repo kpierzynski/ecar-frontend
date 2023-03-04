@@ -1,9 +1,13 @@
 :root {
   color-scheme: light dark;
-  font-family: Ubuntu;
+  font-family: monospace;
+
+  --primary-0: #0b6451;
+  --primary-1: #095041;
+  --primary-2: #073c31;
 }
 
-body {
+body, #app {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
@@ -21,6 +25,5 @@ body {
     color: white;
     background-color: black;
 
-    --test-var: 3rem;
   }
 }
