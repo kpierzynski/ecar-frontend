@@ -1,29 +1,32 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
-  export let sideText;
 
   function handleClick() {
     dispatch('click');
   }
 </script>
 
-<div>
-  <button on:click={handleClick}><slot /></button>
-  <span>{sideText}</span>
-</div>
+<button on:click={handleClick}><slot /></button>
 
 <style>
   button {
-    unset: all;
+    all: unset;
+    padding: 1rem;
+
+    text-transform: uppercase;
+    cursor: pointer;
+
+    text-align: center;
 
     border-radius: 1rem;
     border: none;
 
-    width: 4rem;
-    aspect-ratio: 1;
-
     font-size: x-large;
+
+    box-shadow: 0 10px 0 var(--primary-2);
+    margin-bottom: 10px;
+    transition: transform 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
 
     background-color: var(--primary-0);
     color: #eeeeee;
@@ -34,6 +37,7 @@
   }
 
   button:active {
-    background-color: var(--primary-2);
+    box-shadow: 0 0 0 var(--primary-0);
+    transform: translateY(10px);
   }
 </style>

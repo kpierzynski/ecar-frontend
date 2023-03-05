@@ -1,6 +1,7 @@
 <script>
   import Button from './Button.svelte';
   import { createEventDispatcher } from 'svelte';
+
   const dispatch = createEventDispatcher();
 
   function handleViewAll() {
@@ -12,10 +13,8 @@
 </script>
 
 <aside>
-  <Button on:click={() => handleViewAll()} sideText="View all messages"
-    >V</Button
-  >
-  <Button on:click={() => handleNew()} sideText="Add new message">+</Button>
+  <Button on:click={() => handleViewAll()}>View all</Button>
+  <Button on:click={() => handleNew()}>Add new</Button>
 </aside>
 
 <style>

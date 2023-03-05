@@ -1,22 +1,26 @@
 <script>
+  import globalStore from './stores/globalStore';
+
   import Sidebar from './components/Sidebar.svelte';
   import List from './components/List.svelte';
   import Form from './components/Form.svelte';
 
-  let pageSwitch = 'view';
+  $: pageSwitch = $globalStore.view;
+
+  $: console.log($globalStore.view);
 
   function handleNew() {
-    pageSwitch = 'new';
+    globalStore.view('new');
   }
 
   function handleView() {
-    pageSwitch = 'view';
+    globalStore.view('all');
   }
 </script>
 
 <div class="container">
   <Sidebar on:new={handleNew} on:view={handleView} />
-  {#if pageSwitch == 'view'}
+  {#if pageSwitch == 'all'}
     <List />
   {:else if pageSwitch == 'new'}
     <Form />
@@ -31,12 +35,5 @@
     flex-direction: row;
 
     height: 100vh;
-  }
-
-  main {
-    text-decoration: wavy;
-    text-align: center;
-    background-color: #eeeeee;
-    width: 100%;
   }
 </style>
