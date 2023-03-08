@@ -1,29 +1,19 @@
 <script>
   import Message from './Message.svelte';
   import Search from './Search.svelte';
+  import Modal from './Modal.svelte';
+
+  import { api_delete, api_get } from '../tools/fetcher';
 
   async function getAllMessages() {
-    const response = await fetch('http://localhost:3000/api/message');
-    const body = await response.json();
-
-    if (response.ok) return body;
-    else throw new Error('Cannot fetch data from API.');
+    return await api_get('/message');
   }
 
   let promise = getAllMessages();
 
   async function handleDelete({ detail: id }) {
-    try {
-      const response = await fetch(`http://localhost:3000/api/message/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      promise = getAllMessages();
-    } catch (e) {
-      console.log(e);
-    }
+    await api_delete(`/message/${id}`);
+    promise = getAllMessages();
   }
 </script>
 
@@ -41,7 +31,8 @@
       <p>No messages to show.</p>
     {/if}
   {:catch error}
-    <p style="color: red">{error.message}</p>
+    <p style="color: red">Cannot communicate with server!</p>
+    <p>Details: {error.message}</p>
   {/await}
 </div>
 

@@ -1,16 +1,16 @@
 <script>
   import Button from './Button.svelte';
+  import Dropdown from './Dropdown.svelte';
   import globalStore from './../stores/globalStore';
 
-  const footer = `Tymoteusz Kowalski
-E-CAR
-123-456-789
-e-car.poznan@hotmail.com`;
+  import { api_post } from '../tools/fetcher';
+  import generateStringFromTemplate from './../tools/templateEngine';
 
   const obj = {
-    mail: `Szanowni Państwo,
+    mail: {
+      template: `Szanowni Państwo,
 
-W związku z ostatnią wizytą na {0}, informujemy, że w pojeździe o nr rej. {1} interwencji wymagają następujące pozycje:
+W związku z ostatnią wizytą na {0}, informujemy, że w pojeździe o nr rej. {1} uwagi wymagają następujące pozycje:
 {2*}
 
 Jako profesjonaliści w dziedzinie motoryzacji, wiemy, że bezpieczeństwo jest kluczowe, dlatego zawsze podejmujemy działania, które zapewnią Państwu bezpieczną eksploatację. W trosce o Państwa czas, informujemy o konieczności wizyty w serwisie odpowiednio wcześniej.
@@ -21,6 +21,12 @@ Zachęcamy do umówienia się na wizytę w dogodnym dla Państwa terminie, odpow
 
 Z wyrazami szacunku
 {4}`,
+      footer: `Tymoteusz Kowalski
+E-CAR
+123-456-789
+e-car.poznan@hotmail.com`,
+      title: 'Przypominamy o wizycie w serwisie samochodowym',
+    },
     appoinments: [
       { name: 'Przegląd okresowy', variation: 'przeglądzie okresowym' },
       {
@@ -63,118 +69,78 @@ Z wyrazami szacunku
     ],
   };
 
-  let appointment_type;
-  let selected_first;
+  let appointmentType;
+  $: appointmentTypeVariation =
+    obj.appoinments.find((it) => it.name === appointmentType)?.variation || '<-Rodzaj wizyty->';
+
+  let systemType;
+  $: safetyNote = obj.tree.find((it) => it.name === systemType)?.note || '';
 
   let registration;
+  $: registrationUpper = registration ? registration.toUpperCase() : '<-Numer Rejestracyjny->';
   let to;
-  let title = 'Przypominamy o wizycie w serwisie samochodowym';
-  $: content = generateStringFromTemplate(
-    obj.mail,
-    obj.appoinments.find((it) => it.name === appointment_type)?.variation ||
-      '<- Typ wizyty ->',
-    registration || '<- Numer Rejestracyjny ->',
-    obj.tree
-      .map((it) => it.options)
-      .flat()
-      .filter((it) => it.value)
-      .map((it) => it.name),
-    obj.tree.find((it) => it.name === selected_first)?.note || '',
-    footer
-  );
+  $: title = obj.mail.title;
+
   let whenSend;
+  $: whenSendTimestamp = new Date(whenSend).getTime();
+
+  $: carElements = obj.tree
+    .map((it) => it.options)
+    .flat()
+    .filter((it) => it.value)
+    .map((it) => it.name);
+
+  $: content = generateStringFromTemplate(
+    obj.mail.template,
+    appointmentTypeVariation,
+    registrationUpper,
+    carElements,
+    safetyNote,
+    obj.mail.footer
+  );
+  // Form
 
   async function handleSave() {
-    try {
-      const response = await fetch('http://localhost:3000/api/message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          registration,
-          to,
-          title,
-          content,
-          whenSend: new Date(whenSend).getTime(),
-        }),
-      });
-
-      const data = await response.json();
-      globalStore.view('all');
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  // move this to other file.
-  function generateStringFromTemplate(template, ...args) {
-    return template.replace(/\{(\d+)(\*)?\}/g, (match, index, isList) => {
-      const arg = args[index];
-      if (Array.isArray(arg) && isList === '*') {
-        return arg.map((item) => `- ${item}`).join('\n');
-      } else {
-        return arg;
-      }
+    api_post(`/message`, {
+      registration,
+      to,
+      title,
+      content,
+      whenSend: whenSendTimestamp,
     });
+    globalStore.view('all');
   }
 </script>
 
 <form on:submit|preventDefault|once={handleSave}>
   <div class="container">
     <span>To:</span>
-    <input
-      bind:value={to}
-      type="email"
-      required
-      placeholder="example@internet.com"
-    />
+    <input bind:value={to} type="email" required placeholder="example@internet.com" />
 
-    <input
-      class="registration"
-      bind:value={registration}
-      type="text"
-      placeholder="PY 12345"
-      required
-    />
+    <input class="registration" bind:value={registration} placeholder="PY 12345" required />
 
     <div>
-      <select bind:value={appointment_type}>
-        <option disabled selected> {'<-'} Rodzaj wizyty {'->'}</option>
-        {#each obj.appoinments as appoinment}
-          <option value={appoinment.name}>{appoinment.name}</option>
-        {/each}
-      </select>
-
-      <select bind:value={selected_first}>
-        <option disabled selected>{'<-'} Rodzaj układu {'->'}</option>
-        {#each obj.tree as item}
-          <option value={item.name}>{item.name}</option>
-        {/each}
-      </select>
+      <Dropdown bind:selected={appointmentType} title="Rodzaj wizyty" options={obj.appoinments} />
+      <Dropdown bind:selected={systemType} title="Rodzaj układu" options={obj.tree} />
 
       <div class="check-container">
-        {#if selected_first}
-          {#each obj.tree.find((it) => it.name === selected_first)?.options || [] as item}
-            <span class="checkbox"
-              ><input
-                type="checkbox"
-                bind:checked={item.value}
-              />{item.name}</span
-            >
+        {#if systemType}
+          {#each obj.tree.find((it) => it.name === systemType)?.options || [] as item}
+            <span class="checkbox">
+              <input type="checkbox" bind:checked={item.value} />{item.name}
+            </span>
           {/each}
+        {:else}
+          <span class="checkbox">
+            <input type="checkbox" disabled />
+            <div class="checkbox-placeholder" />
+          </span>
         {/if}
       </div>
     </div>
 
     <span>Title:</span>
-    <input
-      bind:value={title}
-      type="text"
-      required
-      placeholder="Remainder about car maintenance"
-    />
+    <input bind:value={title} required placeholder="Remainder about car maintenance" />
 
     <span>Content:</span>
     <textarea bind:value={content} required placeholder="Dear Client..." />
@@ -202,23 +168,27 @@ Z wyrazami szacunku
     height: calc(100% - 2rem);
   }
 
-  select {
-    border-radius: 1rem;
-    border: 1px solid black;
-
-    padding: 1rem;
-    background-color: transparent;
-  }
-
   .checkbox {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
 
+  .checkbox-placeholder {
+    background-color: lightgray;
+    border-radius: 1rem;
+
+    width: 8rem;
+    height: 1rem;
+  }
+
   input[type='checkbox'] {
     width: 2rem;
     aspect-ratio: 1;
+  }
+
+  input[type='checkbox']:checked {
+    accent-color: var(--primary-0);
   }
 
   input,
