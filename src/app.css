@@ -5,6 +5,14 @@
   --primary-0: #0b6451;
   --primary-1: #095041;
   --primary-2: #073c31;
+
+  --orange-0: #ffc107;
+  --orange-1: #cc9a06;
+  --orange-2: #997404;
+
+  --red-0: #dc3545;
+  --red-1: #b02a37;
+  --red-2: #842029;
 }
 
 body, #app {

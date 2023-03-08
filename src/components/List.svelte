@@ -1,30 +1,53 @@
 <script>
+  import globalStore from './../stores/globalStore';
+
   import Message from './Message.svelte';
+  import MessageCard from './MessageCard.svelte';
   import Search from './Search.svelte';
-  import Modal from './Modal.svelte';
 
   import { api_delete, api_get } from '../tools/fetcher';
 
-  async function getAllMessages() {
+  async function getAllMessages(...args) {
     return await api_get('/message');
   }
 
-  let promise = getAllMessages();
+  $: promise = getAllMessages($globalStore.view);
+  let showMessage = false;
 
-  async function handleDelete({ detail: id }) {
+  async function handleDelete({ detail: { _id: id } }) {
     await api_delete(`/message/${id}`);
     promise = getAllMessages();
+    showMessage = false;
+  }
+
+  function handleShowModal({ detail: data }) {
+    showMessage = data;
+  }
+
+  let filter = '';
+  function handleFilter({ detail: data }) {
+    filter = data.toLowerCase();
   }
 </script>
 
 <div class="container">
+  <Search on:filter={handleFilter} />
   {#await promise}
     <p>...loading...</p>
   {:then { messages }}
     {#if messages && messages.length}
+      <Message
+        data={showMessage}
+        show={!!showMessage}
+        on:sendnow={() =>
+          alert(
+            'NotImplementedYet. This require new endpoint on api to change values in database.'
+          )}
+        on:delete={handleDelete}
+      />
       <div class="list-container list">
-        {#each messages as message}
-          <Message data={message} on:delete={handleDelete} />
+        {#each messages.filter((m) => m.registration.toLowerCase().includes(filter)) as message}
+          <MessageCard data={message} on:click={handleShowModal} on:delete={handleDelete} />
         {/each}
       </div>
     {:else}

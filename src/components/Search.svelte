@@ -10,12 +10,16 @@
   $: handleFilter(value);
 </script>
 
-<input type="text" bind:value />
+<input type="text" placeholder="Search by registration..." bind:value />
 
 <style>
   input {
     border-radius: 1rem;
     padding: 1rem;
     border: 1px solid black;
+
+    border-left-color: blue;
+    border-left-width: 2rem;
+    width: 40%;
   }
 </style>
