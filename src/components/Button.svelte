@@ -6,11 +6,13 @@
     dispatch('click');
   }
   export let color = 'primary';
+  export let squared = false;
 </script>
 
 <button
   style="--btn-color-0: var(--{color}-0); --btn-color-1: var(--{color}-1); --btn-color-2: var(--{color}-2);"
   on:click={handleClick}
+  class={squared ? 'squared' : ''}
 >
   <slot />
 </button>
@@ -46,5 +48,9 @@
   button:active {
     box-shadow: 0 0 0 var(--btn-color-0);
     transform: translateY(10px);
+  }
+
+  .squared {
+    aspect-ratio: 1.2;
   }
 </style>

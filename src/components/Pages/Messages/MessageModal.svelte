@@ -1,24 +1,47 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  const dispatch = createEventDispatcher();
+  import { push, pop, replace } from 'svelte-spa-router';
+  import { messageStore } from '@Stores/messageStore';
+  import { globalStore } from '@Stores/globalStore';
+  import Button from '@Components/Button.svelte';
+  import Modal from '@Components/Modal.svelte';
 
-  import Modal from './Modal.svelte';
-  import Button from './Button.svelte';
-  export let data;
-  export let show;
+  export let id;
+  let show = false;
 
-  $: ({ _id, to, title, content, whenSend, registration, isSent } = data);
+  $: message = $messageStore.find((m) => m._id === id);
+
+  $: if (id) {
+    show = true;
+    handleError();
+  }
+
+  $: if (!show) {
+    handleClose();
+  }
 
   function handleClose() {
     show = false;
+    push('/message');
+  }
+
+  function handleError() {
+    if (message) {
+      show = true;
+      return;
+    }
+
+    handleClose();
+    globalStore.setError(`Cannot find message with ${id} id. Check link and try again.`);
   }
 
   function handleSend() {
-    dispatch('sendnow', data);
+    messageStore.sendMessageById(id);
+    handleClose();
   }
 
   function handleDelete() {
-    dispatch('delete', data);
+    messageStore.deleteMessageById(id);
+    handleClose();
   }
 </script>
 
@@ -27,20 +50,20 @@
     <div class="mail">
       <div class="header">
         <div class="info">
-          <span>to: {to}</span>
-          <span>date: {new Date(whenSend).toLocaleString()}</span>
+          <span>to: {message?.to}</span>
+          <span>date: {new Date(message?.whenSend).toLocaleString()}</span>
         </div>
-        <span class="registration">{registration}</span>
+        <span class="registration">{message?.registration}</span>
       </div>
       <div class="content">
-        <span class="title">{title}</span>
-        <span class="preserve-nl">{content}</span>
+        <span class="title">{message?.title}</span>
+        <span class="preserve-nl">{message?.content}</span>
       </div>
     </div>
 
     <div class="buttons">
       <Button on:click={handleDelete} color="red">Delete</Button>
-      <Button on:click={handleSend} color="orange">Send now</Button>
+      <Button on:click={handleSend} color="orange">Send {message?.isSent ? 'again' : 'now'}</Button>
       <Button on:click={handleClose}>Close</Button>
     </div>
   </div>
@@ -58,7 +81,7 @@
     margin: 0;
     padding: 1rem;
     border-radius: 1rem;
-    background-color: rgb(238, 238, 238);
+    background-color: var(--dark-white);
   }
   .title {
     font-weight: bold;
@@ -67,8 +90,11 @@
     display: flex;
     flex-direction: column;
     border-radius: 1rem;
-    background-color: rgb(238, 238, 238);
+    background-color: var(--dark-white);
     padding: 1rem;
+
+    overflow-y: scroll;
+    max-height: 50vh;
   }
   .registration {
     border: 1px solid black;
@@ -92,6 +118,8 @@
     padding: 1rem;
 
     text-align: start;
+
+    max-height: 90vh;
   }
 
   .mail {

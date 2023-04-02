@@ -1,23 +1,50 @@
 import { writable } from 'svelte/store';
+import { api_get } from '@Tools/fetcher';
 
-const initValue = {
-  view: 'all',
+const emptyConfig = {
+  mailConfig: {},
+  globalConfig: {},
+  appointmentTypes: {},
+  partTypes: {},
 };
 
-function createGlobalStore() {
-  const { subscribe, set, update } = writable(initValue);
+const cfg = await fetchConfig();
+
+async function fetchConfig() {
+  try {
+    const { config } = await api_get('/config');
+    return config;
+  } catch (e) {
+    return emptyConfig;
+  }
+}
+
+const createGlobalStore = () => {
+  const { subscribe, set, update } = writable({
+    loading: false,
+    error: false,
+    config: cfg,
+  });
+
+  const setError = (message) => {
+    update((state) => ({ ...state, error: message }));
+  };
+
+  const clearError = () => {
+    update((state) => ({ ...state, error: false }));
+  };
+
+  const setLoading = (isLoading) => {
+    update((state) => ({ ...state, loading: isLoading }));
+  };
 
   return {
     subscribe,
-    view: (newView) => {
-      update((previousValue) => {
-        return {
-          ...previousValue,
-          view: newView,
-        };
-      });
-    },
+    setError,
+    clearError,
+    setLoading,
   };
-}
+};
 
-export default createGlobalStore();
+const globalStore = createGlobalStore();
+export { globalStore };

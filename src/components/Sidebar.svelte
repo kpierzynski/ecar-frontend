@@ -1,20 +1,38 @@
 <script>
-  import Button from './Button.svelte';
-  import { createEventDispatcher } from 'svelte';
+  import { push, pop, replace } from 'svelte-spa-router';
+  import { messageStore } from '@Stores/messageStore';
+  import Button from '@Components/Button.svelte';
 
-  const dispatch = createEventDispatcher();
-
-  function handleViewAll() {
-    dispatch('view');
-  }
-  function handleNew() {
-    dispatch('new');
-  }
+  const buttons = [
+    {
+      title: 'Home',
+      cb: () => push('/'),
+    },
+    {
+      line: true,
+    },
+    {
+      title: 'View all',
+      cb: () => {
+        push('/message');
+        messageStore.loadMessages();
+      },
+    },
+    {
+      title: 'Add new',
+      cb: () => push('/new'),
+    },
+  ];
 </script>
 
 <aside>
-  <Button on:click={() => handleViewAll()}>View all</Button>
-  <Button on:click={() => handleNew()}>Add new</Button>
+  {#each buttons as { title, cb, line }}
+    {#if line}
+      <hr />
+    {:else}
+      <Button squared on:click={cb}>{title}</Button>
+    {/if}
+  {/each}
 </aside>
 
 <style>
@@ -22,12 +40,15 @@
     background-color: #222222;
     color: #eeeeee;
 
+    height: calc(100vh - 2rem);
+    padding: 1rem;
+
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 1rem;
+  }
 
-    width: 20%;
-    min-width: 200px;
+  hr {
+    width: 100%;
   }
 </style>

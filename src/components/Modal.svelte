@@ -5,7 +5,6 @@
   export let show = false;
 
   function close() {
-    console.log('close');
     show = false;
   }
 
@@ -39,8 +38,8 @@
     background-color: black;
     opacity: 0.5;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 
     position: absolute;
     top: 0;
@@ -53,7 +52,6 @@
 
   .content {
     opacity: 1;
-
     position: absolute;
     left: 50%;
     top: 25%;

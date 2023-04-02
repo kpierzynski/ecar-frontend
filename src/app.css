@@ -2,9 +2,15 @@
   color-scheme: light dark;
   font-family: monospace;
 
-  --primary-0: #0b6451;
+  --dark-white: rgb(238, 238, 238);
+
+  /*--primary-0: #0b6451;
   --primary-1: #095041;
-  --primary-2: #073c31;
+  --primary-2: #073c31;*/
+
+  --primary-0: #0F52BA;
+  --primary-1: #0c4295;
+  --primary-2: #093170;
 
   --orange-0: #ffc107;
   --orange-1: #cc9a06;
@@ -13,6 +19,14 @@
   --red-0: #dc3545;
   --red-1: #b02a37;
   --red-2: #842029;
+
+  --bp-0: 320px;
+  --bp-1: 480px;
+  --bp-2: 768px;
+  --bp-3: 992px; 
+  --bp-4: 1200px;
+  --bp-5: 1440px;
+  --bp-6: 1600px;
 }
 
 body, #app {
@@ -30,8 +44,7 @@ body, #app {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color: white;
-    background-color: black;
-
+    color: black;
+    background-color: white;
   }
 }

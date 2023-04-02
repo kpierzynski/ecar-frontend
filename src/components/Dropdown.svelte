@@ -18,6 +18,6 @@
     border: 1px solid black;
 
     padding: 1rem;
-    background-color: transparent;
+    background-color: white;
   }
 </style>

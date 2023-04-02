@@ -1,14 +1,16 @@
 <script>
+  import { fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
-  import sentIcon from './../assets/icons/sent.svg';
-  import notSentIcon from './../assets/icons/not-sent.svg';
+  import sentIcon from '@Assets/icons/sent.svg';
+  import notSentIcon from '@Assets/icons/not-sent.svg';
   const dispatch = createEventDispatcher();
+
+  export let data;
 
   function handleClick() {
     dispatch('click', data);
   }
 
-  export let data;
   $: ({ _id, to, title, content, whenSend, registration, isSent } = data);
   $: whenSendString = new Date(whenSend).toLocaleString();
 </script>
@@ -16,15 +18,10 @@
 <div class="container" on:keypress={handleClick} on:click={handleClick}>
   <img src={isSent ? sentIcon : notSentIcon} class="tick" alt="email-status" />
 
-  <span>to: {to}</span>
-  <span>registration: {registration}</span>
-  <span>title: {title}</span>
-  <span>date: {whenSendString}</span>
-  {#if content.length > 100}
-    <span>content: {content.substring(0, 255)}...</span>
-  {:else}
-    <span>content: {content}</span>
-  {/if}
+  <span>TO: {to}</span>
+  <span>REGISTRATION: {registration}</span>
+  <span>DATE: {whenSendString}</span>
+  <span>STATUS: {isSent ? 'Sent' : 'Pending'}</span>
 </div>
 
 <style>
