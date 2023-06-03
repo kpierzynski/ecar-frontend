@@ -63,7 +63,9 @@
 
     <div class="buttons">
       <Button on:click={handleDelete} color="red">Delete</Button>
-      <Button on:click={handleSend} color="orange">Send {message?.isSent ? 'again' : 'now'}</Button>
+      <Button on:click={handleSend} color="orange"
+        >Send {message?.isSent == 0 ? 'again' : 'now'}</Button
+      >
       <Button on:click={handleClose}>Close</Button>
     </div>
   </div>

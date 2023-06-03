@@ -18,6 +18,8 @@
     <input class={className} bind:value type="text" {...$$props} />
   {:else if type === 'datetime-local'}
     <input class={className} bind:value type="datetime-local" {...$$props} />
+  {:else if type === 'number'}
+    <input class={className} bind:value type="number" {...$$props} />
   {/if}
 </div>
 

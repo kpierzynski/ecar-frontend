@@ -6,22 +6,36 @@
   const dispatch = createEventDispatcher();
 
   export let data;
-
   function handleClick() {
     dispatch('click', data);
   }
 
-  $: ({ _id, to, title, content, whenSend, registration, isSent } = data);
+  $: ({
+    _id,
+    to,
+    title,
+    content,
+    whenSend,
+    registration,
+    isSent,
+    cyclic,
+    originalDate,
+    originalCounter,
+  } = data);
   $: whenSendString = new Date(whenSend).toLocaleString();
+  $: originalDateString = new Date(originalDate).toLocaleString();
 </script>
 
 <div class="container" on:keypress={handleClick} on:click={handleClick}>
-  <img src={isSent ? sentIcon : notSentIcon} class="tick" alt="email-status" />
+  <img src={isSent == 0 ? sentIcon : notSentIcon} class="tick" alt="email-status" />
 
   <span>TO: {to}</span>
   <span>REGISTRATION: {registration}</span>
-  <span>DATE: {whenSendString}</span>
-  <span>STATUS: {isSent ? 'Sent' : 'Pending'}</span>
+  <span>NEXT DELIVERY DATE: {whenSendString}</span>
+  <span>CYCLIC DELIVERY: {cyclic / 24 / 3600 / 1000} days</span>
+  <span>ORIGINAL DATE: {originalDateString}</span>
+  <span>ORIGINAL COUNTER: {originalCounter}</span>
+  <span>STATUS: {isSent == 0 ? 'Done sending' : `Pending ${isSent} times.`}</span>
 </div>
 
 <style>

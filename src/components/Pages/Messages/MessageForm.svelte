@@ -29,6 +29,9 @@
   let whenSend;
   $: whenSendTimestamp = new Date(whenSend).getTime();
 
+  let cyclic = 1;
+  let quantity = 1;
+
   $: carElements = form.partTypes.types
     .map((it) => it.options)
     .flat()
@@ -62,6 +65,8 @@
       title,
       content,
       whenSend: whenSendTimestamp,
+      isSent: quantity,
+      cyclic: cyclic * 24 * 3600 * 1000,
     });
     push('/message');
   }
@@ -80,6 +85,24 @@
       />
 
       <Input title="Delivery date" bind:value={whenSend} type="datetime-local" required />
+      <div class="cyclic">
+        <Input
+          title="Redelivery gap days"
+          bind:value={cyclic}
+          min="1"
+          max="30"
+          type="number"
+          required
+        />
+        <Input
+          title="Delivery quantity"
+          bind:value={quantity}
+          min="1"
+          max="3"
+          type="number"
+          required
+        />
+      </div>
     </div>
 
     <div class="part">
@@ -126,12 +149,20 @@
     padding: 1rem;
   }
 
+  .cyclic {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+  }
+
   form {
     display: flex;
     flex-direction: column;
 
     gap: 1rem;
     height: 100%;
+
+    min-height: 25%;
   }
 
   .part {
@@ -163,6 +194,12 @@
 
   @media screen and (max-width: 480px) {
     .dropdowns-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .cyclic {
       grid-template-columns: 1fr;
     }
   }
