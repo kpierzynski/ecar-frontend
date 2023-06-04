@@ -29,10 +29,10 @@
 <div class="container" on:keypress={handleClick} on:click={handleClick}>
   <img src={isSent == 0 ? sentIcon : notSentIcon} class="tick" alt="email-status" />
 
+  <span>REGISTRATION: <b>{registration.toUpperCase()}</b></span>
   <span>TO: {to}</span>
-  <span>REGISTRATION: {registration}</span>
   <span>NEXT DELIVERY DATE: {whenSendString}</span>
-  <span>CYCLIC DELIVERY: {cyclic / 24 / 3600 / 1000} days</span>
+  <span>CYCLIC DELIVERY: {cyclic / 24 / 3600 / 1000} day(s)</span>
   <span>ORIGINAL DATE: {originalDateString}</span>
   <span>ORIGINAL COUNTER: {originalCounter}</span>
   <span>STATUS: {isSent == 0 ? 'Done sending' : `Pending ${isSent} times.`}</span>

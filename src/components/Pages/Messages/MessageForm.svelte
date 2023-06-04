@@ -137,15 +137,22 @@
     <div class="part grow">
       <Input title="Title" bind:value={title} required />
 
-      <textarea class="grow" bind:value={content} required />
+      <iframe title="Mail Previev" srcdoc={content} />
+      <!--<textarea class="grow" bind:value={content} required />-->
     </div>
     <Button>Save</Button>
   </form>
 </div>
 
 <style>
+  iframe {
+    height: calc(100% - 2rem);
+    min-height: 33vh;
+  }
+
   .container {
     width: 100%;
+    height: calc(100vh - 2rem);
     padding: 1rem;
   }
 

@@ -1,4 +1,4 @@
-const url = 'http://172.20.10.3:3000/api';
+const url = 'http://150.254.42.235:3000/api';
 
 async function api(endpoint, options) {
   const response = await fetch(`${url}${endpoint}`, options);

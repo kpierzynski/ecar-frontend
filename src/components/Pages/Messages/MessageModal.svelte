@@ -57,7 +57,7 @@
       </div>
       <div class="content">
         <span class="title">{message?.title}</span>
-        <span class="preserve-nl">{message?.content}</span>
+        <span class="preserve-nl"><iframe title="Mail Previev" srcdoc={message?.content} /></span>
       </div>
     </div>
 
@@ -72,6 +72,12 @@
 </Modal>
 
 <style>
+  iframe {
+    margin-top: 1rem;
+    width: 70vw;
+    min-height: calc(70vh - 2rem);
+  }
+
   .info {
     display: flex;
     flex-direction: column;
